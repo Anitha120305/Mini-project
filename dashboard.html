@@ -1,0 +1,156 @@
+{% extends "base.html" %}
+{% block title %}Dashboard - Expense Tracker{% endblock %}
+
+{% block content %}
+
+<h2>Welcome, {{ session['user_name'] }}</h2>
+<p class="muted">{{ month_label }}</p>
+
+{% if not income %}
+    <div class="flash flash-warning">
+        Set your monthly income and category budgets on the
+        <a href="{{ url_for('budget') }}">Budget page</a> to see your balance and alerts.
+    </div>
+{% endif %}
+
+<div class="stats">
+    <div class="stat">
+        <span class="stat-label">Monthly income</span>
+        <span class="stat-value">₹{{ "%.2f"|format(income) }}</span>
+    </div>
+    <div class="stat">
+        <span class="stat-label">Spent this month</span>
+        <span class="stat-value">₹{{ "%.2f"|format(spent) }}</span>
+    </div>
+    <div class="stat">
+        <span class="stat-label">Balance left</span>
+        <span class="stat-value {{ 'negative' if balance < 0 else 'positive' }}">₹{{ "%.2f"|format(balance) }}</span>
+    </div>
+    <div class="stat">
+        <span class="stat-label">Savings</span>
+        <span class="stat-value">₹{{ "%.2f"|format(savings) }}</span>
+    </div>
+</div>
+
+{% if alert_rows %}
+<div class="panel">
+    <h3>Budget alerts</h3>
+    {% for r in alert_rows %}
+        <div class="alert alert-{{ r.state }}" style="border-left-color: {{ r.color }};">
+            {% if r.state == 'over' %}
+                <strong>{{ r.category }}</strong> is over budget by ₹{{ "%.2f"|format(r.over) }}.
+            {% else %}
+                <strong>{{ r.category }}</strong> has used {{ "%.0f"|format(r.percent) }}% of its budget
+                (₹{{ "%.2f"|format(r.remaining) }} left).
+            {% endif %}
+        </div>
+    {% endfor %}
+</div>
+{% endif %}
+
+{% for r in over_rows %}
+<div class="panel resolve-panel" style="border-top: 4px solid {{ r.color }};">
+    <h3>Cover the overspend in {{ r.category }}: ₹{{ "%.2f"|format(r.over) }}</h3>
+
+    {% if r.options %}
+        <form method="POST" action="{{ url_for('resolve_overspend') }}" class="resolve-form">
+            <input type="hidden" name="category" value="{{ r.category }}">
+
+            <div>
+                <label for="source-{{ r.category }}">Take the money from</label>
+                <select id="source-{{ r.category }}" name="source">
+                    {% for o in r.options %}
+                        <option value="{{ o.value }}">{{ o.label }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div>
+                <label for="amount-{{ r.category }}">Amount (₹)</label>
+                <input type="number" id="amount-{{ r.category }}" name="amount"
+                       step="0.01" min="0.01" max="{{ '%.2f'|format(r.over) }}"
+                       value="{{ '%.2f'|format(r.over) }}" required>
+            </div>
+
+            <button type="submit" class="btn-inline">Apply</button>
+        </form>
+    {% else %}
+        <p class="empty">
+            There is no savings or spare category budget to use. You can raise this
+            category's limit on the <a href="{{ url_for('budget') }}">Budget page</a>,
+            or leave it as it is (the extra spending still reduces your balance).
+        </p>
+    {% endif %}
+</div>
+{% endfor %}
+
+<div class="panel">
+    <h3>This month by category</h3>
+    {% for r in rows %}
+        {% if r.spent > 0 or r.limit %}
+        <div class="cat-row">
+            <div class="cat-head">
+                <span><span class="dot" style="background: {{ r.color }};"></span><strong>{{ r.category }}</strong></span>
+                <span class="cat-nums">
+                    ₹{{ "%.2f"|format(r.spent) }}{% if r.limit %} / ₹{{ "%.2f"|format(r.limit) }}{% endif %}
+                </span>
+            </div>
+            {% if r.limit %}
+                <div class="bar">
+                    <div class="bar-fill" style="width: {{ [r.percent, 100]|min }}%; background: {{ r.color }};"></div>
+                </div>
+                <div class="cat-sub state-{{ r.state }}">
+                    {% if r.state == 'over' %}
+                        Over by ₹{{ "%.2f"|format(r.over) }}
+                    {% elif r.state == 'warn' %}
+                        Near limit: ₹{{ "%.2f"|format(r.remaining) }} left
+                    {% else %}
+                        ₹{{ "%.2f"|format(r.remaining) }} left
+                    {% endif %}
+                </div>
+            {% else %}
+                <div class="cat-sub">No budget set</div>
+            {% endif %}
+        </div>
+        {% endif %}
+    {% else %}
+        <p class="empty">Nothing yet.</p>
+    {% endfor %}
+
+    {% if spent == 0 and not rows|selectattr('limit')|list %}
+        <p class="empty">No spending this month and no budgets set.
+            <a href="{{ url_for('add_expense') }}">Add an expense</a> or
+            <a href="{{ url_for('budget') }}">set budgets</a>.</p>
+    {% endif %}
+</div>
+
+<div class="panel">
+    <h3>Recent expenses</h3>
+    {% if recent %}
+        <table>
+            <thead>
+                <tr><th>Date</th><th>Title</th><th>Category</th><th class="num">Amount</th></tr>
+            </thead>
+            <tbody>
+                {% for e in recent %}
+                <tr>
+                    <td>{{ e['expense_date'] }}</td>
+                    <td>{{ e['title'] }}</td>
+                    <td>
+                        <span class="dot" style="background: {{ CATEGORY_COLORS.get(e['category'], '#8d99ae') }};"></span>{{ e['category'] }}
+                    </td>
+                    <td class="num">₹{{ "%.2f"|format(e['amount']) }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <p class="link-row"><a href="{{ url_for('history') }}">View all expenses</a></p>
+    {% else %}
+        <p class="empty">Nothing here yet.</p>
+    {% endif %}
+</div>
+
+<p class="muted small">All-time spending: ₹{{ "%.2f"|format(all_time_total) }}.
+    Balance left = monthly income - spent this month + amounts covered from savings.</p>
+
+{% endblock %}

@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+{% block title %}Budget - Expense Tracker{% endblock %}
+
+{% block content %}
+
+<h2>Income & budgets</h2>
+
+<div class="panel">
+    <form method="POST" action="{{ url_for('budget') }}">
+
+        <h3>Your money</h3>
+
+        <div class="form-grid">
+            <div>
+                <label for="income">Monthly income / salary (₹)</label>
+                <input type="number" id="income" name="income" step="0.01" min="0"
+                       value="{{ '%.2f'|format(income) if income else '' }}" placeholder="e.g. 30000">
+            </div>
+            <div>
+                <label for="savings">Current savings (₹)</label>
+                <input type="number" id="savings" name="savings" step="0.01" min="0"
+                       value="{{ '%.2f'|format(savings) if savings else '' }}" placeholder="e.g. 5000">
+            </div>
+            <div>
+                <label for="alert_percent">Alert me when a category reaches (%)</label>
+                <input type="number" id="alert_percent" name="alert_percent" min="1" max="100"
+                       value="{{ alert_percent }}">
+            </div>
+        </div>
+
+        <h3>Monthly limit for each category</h3>
+        <p class="muted small">Leave a box empty for no limit. Limits apply to every month.</p>
+
+        <div class="form-grid">
+            {% for c in categories %}
+            <div>
+                <label for="limit_{{ c }}">
+                    <span class="dot" style="background: {{ CATEGORY_COLORS[c] }};"></span>{{ c }} (₹)
+                </label>
+                <input type="number" id="limit_{{ c }}" name="limit_{{ c }}" step="0.01" min="0"
+                       value="{{ '%.2f'|format(limits[c]) if c in limits else '' }}" placeholder="No limit">
+            </div>
+            {% endfor %}
+        </div>
+
+        <p class="budget-total">
+            Total budgeted: <strong>₹{{ "%.2f"|format(total_budgeted) }}</strong>
+            {% if income %}
+                of ₹{{ "%.2f"|format(income) }} income
+                {% if total_budgeted > income %}
+                    <span class="state-over">(over your income by ₹{{ "%.2f"|format(total_budgeted - income) }})</span>
+                {% else %}
+                    (₹{{ "%.2f"|format(income - total_budgeted) }} not assigned)
+                {% endif %}
+            {% endif %}
+        </p>
+
+        <button type="submit">Save</button>
+    </form>
+</div>
+
+<div class="panel">
+    <h3>Overspending covered in {{ month_label }}</h3>
+    {% if adjustments %}
+        <table>
+            <thead>
+                <tr><th>Category</th><th>Taken from</th><th class="num">Amount</th><th></th></tr>
+            </thead>
+            <tbody>
+                {% for a in adjustments %}
+                <tr>
+                    <td>
+                        <span class="dot" style="background: {{ CATEGORY_COLORS.get(a.category, '#8d99ae') }};"></span>{{ a.category }}
+                    </td>
+                    <td>{{ a.source }}</td>
+                    <td class="num">₹{{ "%.2f"|format(a.amount) }}</td>
+                    <td class="actions">
+                        <form method="POST" action="{{ url_for('undo_adjustment', adjustment_id=a.id) }}"
+                              onsubmit="return confirm('Undo this adjustment?');">
+                            <button type="submit" class="btn-danger">Undo</button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p class="empty">Nothing yet. If a category goes over its limit, the Dashboard lets you cover it from savings or another category.</p>
+    {% endif %}
+</div>
+
+{% endblock %}

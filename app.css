@@ -1,0 +1,469 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background: #f4f6f8;
+    color: #222;
+}
+
+/* ---------- Navbar ---------- */
+.navbar {
+    background: #222;
+    color: white;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    padding: 14px 24px;
+}
+
+.brand {
+    font-weight: bold;
+    font-size: 18px;
+}
+
+.nav-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 18px;
+}
+
+.nav-links a {
+    color: #ddd;
+    font-weight: normal;
+    font-size: 14px;
+}
+
+.nav-links a:hover {
+    color: white;
+}
+
+/* ---------- Layout ---------- */
+.page {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 24px 16px 60px;
+}
+
+h2 {
+    margin-bottom: 16px;
+    font-size: 22px;
+    text-align: left;
+}
+
+h3 {
+    margin-bottom: 12px;
+    font-size: 17px;
+    text-align: left;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+a {
+    color: #222;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+.flash {
+    background: #e8f0fe;
+    padding: 10px 14px;
+    border-radius: 6px;
+    margin-bottom: 16px;
+    font-size: 14px;
+}
+
+.panel {
+    background: white;
+    padding: 22px;
+    border-radius: 12px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.07);
+    margin-bottom: 20px;
+}
+
+.form-panel {
+    max-width: 480px;
+    margin: 0 auto;
+}
+
+.empty {
+    color: #777;
+}
+
+.link-row {
+    margin-top: 14px;
+    font-size: 14px;
+}
+
+/* ---------- Stats ---------- */
+.stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 16px;
+    margin-bottom: 20px;
+}
+
+.stat {
+    background: white;
+    padding: 22px;
+    border-radius: 12px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.07);
+}
+
+.stat-label {
+    display: block;
+    color: #777;
+    font-size: 14px;
+    margin-bottom: 6px;
+}
+
+.stat-value {
+    font-size: 30px;
+    font-weight: bold;
+}
+
+/* ---------- Tables ---------- */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+}
+
+th, td {
+    text-align: left;
+    padding: 10px 8px;
+    border-bottom: 1px solid #eee;
+}
+
+th {
+    color: #777;
+    font-weight: normal;
+}
+
+.num {
+    text-align: right;
+}
+
+.actions {
+    display: flex;
+    gap: 12px;
+    justify-content: flex-end;
+    align-items: center;
+}
+
+.actions form {
+    margin: 0;
+}
+
+.day-total {
+    font-size: 15px;
+    color: #555;
+}
+
+/* ---------- Forms ---------- */
+label {
+    display: block;
+    margin-bottom: 7px;
+    font-weight: bold;
+    font-size: 14px;
+}
+
+input, select {
+    width: 100%;
+    padding: 11px;
+    margin-bottom: 16px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 15px;
+    background: white;
+}
+
+input:focus, select:focus {
+    outline: none;
+    border-color: #555;
+}
+
+button {
+    width: 100%;
+    padding: 12px;
+    border: none;
+    border-radius: 8px;
+    background: #222;
+    color: white;
+    font-size: 15px;
+    cursor: pointer;
+}
+
+button:hover {
+    background: #444;
+}
+
+.btn-danger {
+    width: auto;
+    padding: 5px 10px;
+    font-size: 13px;
+    background: #c0392b;
+}
+
+.btn-danger:hover {
+    background: #962d22;
+}
+
+/* ---------- Filters ---------- */
+.filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px;
+    align-items: flex-end;
+    background: white;
+    padding: 18px;
+    border-radius: 12px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.07);
+    margin-bottom: 16px;
+}
+
+.filters input, .filters select {
+    margin-bottom: 0;
+    width: 170px;
+}
+
+.btn-inline {
+    width: auto;
+    padding: 11px 18px;
+}
+
+.btn-link {
+    padding: 11px 6px;
+    font-size: 14px;
+}
+
+.filtered-total {
+    margin-bottom: 16px;
+}
+
+/* ---------- Colours, budgets, alerts ---------- */
+.muted {
+    color: #777;
+    margin-bottom: 16px;
+}
+
+.small {
+    font-size: 13px;
+}
+
+.dot {
+    display: inline-block;
+    width: 11px;
+    height: 11px;
+    border-radius: 50%;
+    margin-right: 8px;
+    vertical-align: middle;
+}
+
+.flash-warning {
+    background: #fff4e0;
+    border-left: 4px solid #e08a00;
+}
+
+.positive {
+    color: #1e7a4c;
+}
+
+.negative {
+    color: #c0392b;
+}
+
+.alert {
+    padding: 10px 14px;
+    margin-bottom: 8px;
+    border-radius: 6px;
+    border-left: 5px solid #ccc;
+    font-size: 14px;
+}
+
+.alert-warn {
+    background: #fff8e6;
+}
+
+.alert-over {
+    background: #fdecea;
+}
+
+.cat-row {
+    margin-bottom: 18px;
+}
+
+.cat-head {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 6px;
+    font-size: 14px;
+}
+
+.cat-nums {
+    color: #555;
+}
+
+.bar {
+    height: 10px;
+    background: #eceff1;
+    border-radius: 5px;
+    overflow: hidden;
+}
+
+.bar-fill {
+    height: 100%;
+    border-radius: 5px;
+}
+
+.cat-sub {
+    margin-top: 5px;
+    font-size: 13px;
+    color: #777;
+}
+
+.state-warn {
+    color: #b36b00;
+    font-weight: bold;
+}
+
+.state-over {
+    color: #c0392b;
+    font-weight: bold;
+}
+
+.resolve-form {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px;
+    align-items: flex-end;
+}
+
+.resolve-form select {
+    width: 300px;
+    max-width: 100%;
+    margin-bottom: 0;
+}
+
+.resolve-form input[type="number"] {
+    width: 140px;
+    margin-bottom: 0;
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 0 18px;
+    margin-bottom: 8px;
+}
+
+.budget-total {
+    margin: 4px 0 18px;
+    font-size: 14px;
+}
+
+/* ---------- Reports charts (plain SVG and CSS, no libraries) ---------- */
+.donut {
+    display: block;
+    width: 100%;
+    max-width: 320px;
+    margin: 0 auto 14px;
+    transform: none;
+}
+
+.donut-label {
+    font-size: 2.6px;
+    font-weight: bold;
+    fill: #ffffff;
+}
+
+.donut-total-label {
+    font-size: 2.4px;
+    fill: #777;
+}
+
+.donut-total {
+    font-size: 3.6px;
+    font-weight: bold;
+    fill: #222;
+}
+
+.legend {
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 18px;
+    justify-content: center;
+    font-size: 14px;
+}
+
+.month-chart {
+    display: flex;
+    align-items: stretch;
+    gap: 16px;
+    height: 260px;
+    overflow-x: auto;
+    padding-bottom: 4px;
+}
+
+.month-col {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-width: 64px;
+    height: 100%;
+}
+
+.month-area {
+    flex: 1;
+    width: 100%;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    border-bottom: 1px solid #ccd2d7;
+}
+
+.month-bar {
+    width: 40px;
+    background: #264653;
+    border-radius: 4px 4px 0 0;
+    min-height: 3px;
+}
+
+.month-val {
+    font-size: 13px;
+    font-weight: bold;
+    margin-bottom: 6px;
+}
+
+.month-label {
+    font-size: 13px;
+    color: #555;
+    margin-top: 6px;
+}
+
+/* ---------- Charts ---------- */
+.chart-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+}
+
+@media (max-width: 600px) {
+    .navbar {
+        padding: 12px 16px;
+    }
+    .panel {
+        overflow-x: auto;
+    }
+}

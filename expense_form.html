@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block title %}{{ 'Edit' if expense else 'Add' }} expense - Expense Tracker{% endblock %}
+
+{% block content %}
+
+<div class="panel form-panel">
+    <h2>{{ 'Edit expense' if expense else 'Add expense' }}</h2>
+
+    <form method="POST">
+
+        <label for="title">Title</label>
+        <input type="text" id="title" name="title" required
+               placeholder="e.g. Lunch, Bus ticket"
+               value="{{ expense['title'] if expense else '' }}">
+
+        <label for="amount">Amount (₹)</label>
+        <input type="number" id="amount" name="amount" step="0.01" min="0.01" required
+               value="{{ expense['amount'] if expense else '' }}">
+
+        <label for="category">Category</label>
+        <select id="category" name="category" required>
+            {% for c in categories %}
+                <option value="{{ c }}"
+                    {% if expense and expense['category'] == c %}selected{% endif %}>
+                    {{ c }}
+                </option>
+            {% endfor %}
+        </select>
+
+        <label for="expense_date">Date</label>
+        <input type="date" id="expense_date" name="expense_date" required
+               value="{{ expense['expense_date'] if expense else today }}">
+
+        <label for="note">Note (optional)</label>
+        <input type="text" id="note" name="note"
+               value="{{ expense['note'] if expense and expense['note'] else '' }}">
+
+        <button type="submit">{{ 'Save changes' if expense else 'Add expense' }}</button>
+    </form>
+
+    <p class="link-row"><a href="{{ url_for('history') }}">Cancel</a></p>
+</div>
+
+{% endblock %}

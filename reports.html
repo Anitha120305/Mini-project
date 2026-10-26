@@ -1,0 +1,132 @@
+{% extends "base.html" %}
+{% block title %}Reports - Expense Tracker{% endblock %}
+
+{% block content %}
+
+<h2>Charts & reports</h2>
+
+{% if not has_data %}
+
+<div class="panel">
+    <p class="empty">No data yet. <a href="{{ url_for('add_expense') }}">Add an expense</a> to see charts.</p>
+</div>
+
+{% else %}
+
+{% if income_used_percent is not none %}
+<div class="panel">
+    <h3>Income used in {{ month_label }}</h3>
+    <div class="cat-head">
+        <span>₹{{ "%.2f"|format(month_spent) }} spent of ₹{{ "%.2f"|format(income) }} income</span>
+        <strong>{{ "%.1f"|format(income_used_percent) }}%</strong>
+    </div>
+    <div class="bar">
+        <div class="bar-fill" style="width: {{ [income_used_percent, 100]|min }}%; background: #264653;"></div>
+    </div>
+</div>
+{% endif %}
+
+<div class="chart-grid">
+
+    <div class="panel">
+        <h3>Spending by category (% of total)</h3>
+        <svg class="donut" viewBox="0 0 42 42" role="img" aria-label="Spending by category">
+            <circle cx="21" cy="21" r="15.9155" fill="none" stroke="#eceff1" stroke-width="6"></circle>
+            {% for d in donut %}
+            <circle cx="21" cy="21" r="15.9155" fill="none"
+                    stroke="{{ d.color }}" stroke-width="6"
+                    stroke-dasharray="{{ d.dash }} {{ d.gap }}"
+                    stroke-dashoffset="{{ d.offset }}">
+                <title>{{ d.category }}: ₹{{ "%.2f"|format(d.total) }} ({{ "%.1f"|format(d.percent) }}%)</title>
+            </circle>
+            {% endfor %}
+            {% for d in donut %}
+                {% if d.show_label %}
+                <text x="{{ d.tx }}" y="{{ d.ty }}" text-anchor="middle" class="donut-label">{{ "%.0f"|format(d.percent) }}%</text>
+                {% endif %}
+            {% endfor %}
+            <text x="21" y="20.2" text-anchor="middle" class="donut-total-label">Total</text>
+            <text x="21" y="24" text-anchor="middle" class="donut-total">₹{{ "%.0f"|format(grand_total) }}</text>
+        </svg>
+        <ul class="legend">
+            {% for d in donut %}
+            <li><span class="dot" style="background: {{ d.color }};"></span>{{ d.category }} ({{ "%.1f"|format(d.percent) }}%)</li>
+            {% endfor %}
+        </ul>
+    </div>
+
+    <div class="panel">
+        <h3>Monthly spending</h3>
+        <div class="month-chart">
+            {% for m in months %}
+            <div class="month-col">
+                <span class="month-val">₹{{ "%.0f"|format(m.total) }}</span>
+                <div class="month-area">
+                    <div class="month-bar" style="height: {{ m.height }}%;"></div>
+                </div>
+                <span class="month-label">{{ m.label }}</span>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+</div>
+
+<div class="panel">
+    <h3>Category breakdown <span class="day-total">Total ₹{{ "%.2f"|format(grand_total) }}</span></h3>
+    <table>
+        <thead>
+            <tr><th>Category</th><th class="num">Amount</th><th class="num">Share of spending</th></tr>
+        </thead>
+        <tbody>
+            {% for b in breakdown %}
+            <tr>
+                <td><span class="dot" style="background: {{ b.color }};"></span>{{ b.category }}</td>
+                <td class="num">₹{{ "%.2f"|format(b.total) }}</td>
+                <td class="num">{{ "%.1f"|format(b.percent) }}%</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% if budget_bars %}
+<div class="panel">
+    <h3>Budget vs spent: {{ month_label }}</h3>
+    {% for b in budget_bars %}
+    <div class="cat-row">
+        <div class="cat-head">
+            <span><span class="dot" style="background: {{ b.color }};"></span><strong>{{ b.category }}</strong></span>
+            <span class="cat-nums">₹{{ "%.2f"|format(b.spent) }} / ₹{{ "%.2f"|format(b.limit) }}</span>
+        </div>
+        <div class="bar">
+            <div class="bar-fill" style="width: {{ b.percent }}%; background: {{ b.color }};"></div>
+        </div>
+        {% if b.state == 'over' %}
+        <div class="cat-sub state-over">Over budget</div>
+        {% endif %}
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
+
+<div class="panel">
+    <h3>Monthly report</h3>
+    <table>
+        <thead>
+            <tr><th>Month</th><th class="num">Total</th></tr>
+        </thead>
+        <tbody>
+            {% for r in monthly_rows %}
+            <tr>
+                <td>{{ r['month'] }}</td>
+                <td class="num">₹{{ "%.2f"|format(r['total']) }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% endif %}
+
+{% endblock %}
